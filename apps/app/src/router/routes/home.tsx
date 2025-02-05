@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { Loading } from '~/components/Loading';
+import { BooksList } from '~/features/books/components/BooksList';
 import { useGetTodoList } from '~/features/sample/api/getTodoList';
 
 export const HomeRoute = () => {
@@ -15,11 +16,7 @@ export const HomeRoute = () => {
 
   return (
     <div>
-      <div>
-        {data.map((item) => (
-          <div key={item.id}>{item.task}</div>
-        ))}
-      </div>
+      <BooksList />
     </div>
   );
 };

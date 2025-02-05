@@ -1,5 +1,8 @@
 import { parseArgs } from 'node:util';
 import { prisma } from './';
+import { authorsSeed } from 'data/authors.seed';
+import { genresSeed } from 'data/genres.seed';
+import { booksSeed } from 'data/books.seed';
 
 async function main() {
   const {
@@ -7,7 +10,10 @@ async function main() {
   } = parseArgs({ options: { environment: { type: 'string' } } });
 
   await prisma.$transaction(async (tx) => {
-    // TODO: run production seeds here
+    // Run production seeds here
+    await authorsSeed();
+    await genresSeed();
+    await booksSeed();
   });
 
   switch (environment) {
