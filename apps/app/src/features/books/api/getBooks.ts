@@ -13,17 +13,23 @@ export type APIBook = Book & {
 /**
  * Fetches the todo list from the 'sample' route.
  */
-export const fetchBooks = async () => {
-  const response = await api.get<APIBook[]>('/books');
+export const fetchBooks = async (params?: {
+  authorId?: string;
+  genresIds?: string[];
+}) => {
+  const response = await api.get<APIBook[]>('/books', { params });
   return response.data;
 };
 
 /**
  * React Query hook to get the todo list.
  */
-export function useGetBooks() {
+export function useGetBooks(params?: {
+  authorId?: string;
+  genresIds?: string[];
+}) {
   return useQuery({
-    queryKey: ['books'],
-    queryFn: fetchBooks,
+    queryKey: ['books', params],
+    queryFn: () => fetchBooks(params),
   });
 }

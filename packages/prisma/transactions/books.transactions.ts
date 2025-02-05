@@ -7,6 +7,15 @@ interface PaginationParams {
   limit?: number;
 }
 
+export type GetAllBooksParams = PaginationParams & {
+  authorId?: string;
+  genresIds?: string[];
+};
+
+export type GetAllArgs = {
+  params: GetAllBooksParams;
+};
+
 export const booksTransactions = (tx: Prisma.TransactionClient) => {
   return {
     create: async (input: CreateBookInput) => {
@@ -62,11 +71,26 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
       return book;
     },
 
-    getAll: async ({ page = 1, limit = 10 }: PaginationParams = {}) => {
+    getAll: async (args: GetAllArgs) => {
+      const { params } = args;
+      const {
+        page = 1,
+        limit = 10,
+        authorId = undefined,
+        genresIds = undefined,
+      } = params;
       const validatedLimit = Math.min(Math.max(limit, 10), 100);
       const skip = (page - 1) * validatedLimit;
 
       return tx.book.findMany({
+        where: {
+          authorId: authorId,
+          genres: {
+            some: {
+              genreId: { in: genresIds },
+            },
+          },
+        },
         skip,
         take: validatedLimit,
         include: {
