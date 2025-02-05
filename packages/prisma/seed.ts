@@ -11,14 +11,14 @@ async function main() {
 
   await prisma.$transaction(async (tx) => {
     // Run production seeds here
-    await authorsSeed();
-    await genresSeed();
-    await booksSeed();
   });
 
   switch (environment) {
     case 'development':
-      // TODO: Run development seeds here
+      // Run development seeds here
+      await authorsSeed();
+      await genresSeed();
+      await booksSeed();
       break;
     default:
       break;

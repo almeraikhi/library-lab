@@ -1,18 +1,63 @@
 import { prisma } from 'index';
 import { genresTransactions } from 'transactions/genres.transactions';
+import { createId } from '@paralleldrive/cuid2';
 
 export const genres = {
   scienceFiction: {
-    id: 'cm6rjbjpv00073b6iqbuxyr76',
+    id: createId(),
     name: 'Science Fiction',
   },
   fantasy: {
-    id: 'cm6rjcgka000a3b6ik9snxvp3',
+    id: createId(),
     name: 'Fantasy',
   },
   youngAdult: {
-    id: 'cm6rjck50000e3b6i6j90rwke',
+    id: createId(),
     name: 'Young Adult',
+  },
+  art: {
+    id: createId(),
+    name: 'Art',
+  },
+  history: {
+    id: createId(),
+    name: 'History',
+  },
+  romance: {
+    id: createId(),
+    name: 'Romance',
+  },
+  mystery: {
+    id: createId(),
+    name: 'Mystery',
+  },
+  horror: {
+    id: createId(),
+    name: 'Horror',
+  },
+  thriller: {
+    id: createId(),
+    name: 'Thriller',
+  },
+  biography: {
+    id: createId(),
+    name: 'Biography',
+  },
+  autobiography: {
+    id: createId(),
+    name: 'Autobiography',
+  },
+  memoir: {
+    id: createId(),
+    name: 'Memoir',
+  },
+  selfHelp: {
+    id: createId(),
+    name: 'Self Help',
+  },
+  travel: {
+    id: createId(),
+    name: 'Travel',
   },
 };
 
