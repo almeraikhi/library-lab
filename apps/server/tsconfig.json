@@ -1,0 +1,11 @@
+{
+  "extends": "@repo/typescript-config/base.json",
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "declarationMap": false,
+    "declaration": false
+  },
+  "include": ["**/*.ts", "env.ts"],
+  "exclude": ["node_modules"]
+}
