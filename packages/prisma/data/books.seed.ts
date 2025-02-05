@@ -7,21 +7,31 @@ export const booksSeed = async () => {
     const authors = await tx.author.findMany();
     const genres = await tx.genre.findMany();
 
-    const promises = Array.from({ length: 10 }, () => {
-      const author = authors[Math.floor(Math.random() * authors.length)];
-      const genre = genres[Math.floor(Math.random() * genres.length)];
-      if (!author || !genre) {
-        throw new Error('Author or genre not found');
-      }
+    // create a random amount of books for each author.
+    const promises = authors
+      .map((author) => {
+        const amount = faker.number.int({ min: 1, max: 10 });
 
-      return booksTransactions(tx).create({
-        title: faker.lorem.words(3),
-        authorId: author.id,
-        genresIds: [genre.id],
-        ISBN: faker.string.numeric(13),
-        publishedAt: faker.date.past(),
-      });
-    });
+        const promises = Array.from({ length: amount }, () => {
+          // select a random genere
+          const genre = genres[Math.floor(Math.random() * genres.length)];
+          if (!genre) {
+            throw new Error('Genre not found');
+          }
+
+          // return the transaction
+          return booksTransactions(tx).create({
+            title: faker.lorem.words(3),
+            authorId: author.id,
+            genresIds: [genre.id],
+            ISBN: faker.string.numeric(13),
+            publishedAt: faker.date.past(),
+          });
+        });
+
+        return promises;
+      })
+      .flat();
 
     await Promise.all(promises);
   });
