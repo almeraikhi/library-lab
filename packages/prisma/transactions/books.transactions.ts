@@ -1,5 +1,6 @@
 import { Prisma } from '@repo/prisma';
 import { CreateBookInput } from '../dtos/books.dto';
+import { ApiError } from 'utils/ApiError';
 
 interface PaginationParams {
   page?: number;
@@ -21,7 +22,7 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
       });
 
       if (bookExists) {
-        throw new Error('Book already exists');
+        throw new ApiError('Book already exists', 'BOOK_ALREADY_EXISTS', 409);
       }
 
       // Validate genre IDs
