@@ -213,5 +213,12 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
         throw error;
       }
     },
+
+    getLogs: async ({ id }: GetBookByIdInput) => {
+      return tx.bookUpdateLog.findMany({
+        where: { bookId: id },
+        orderBy: { createdAt: 'desc' },
+      });
+    },
   };
 };

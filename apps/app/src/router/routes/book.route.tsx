@@ -3,10 +3,12 @@ import { useNavigate, useParams } from 'react-router-dom';
 import Breadcrumb from '~/components/Breadcumb/Breadcrumb';
 import { Button } from '~/components/Button';
 import { useBook } from '~/features/books/api/useBook';
+import { useBookLogs } from '~/features/books/api/useBookLogs';
 
 export const BookRoute = () => {
   const { id } = useParams();
   const { data, isLoading } = useBook({ id: id! });
+  const { data: logs, isLoading: isLoadingLogs } = useBookLogs({ id: id! });
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -45,8 +47,12 @@ export const BookRoute = () => {
       </div>
       <div>Published at {dayjs(data.publishedAt).format('YYYY')}</div>
       <div>ISBN: {data.ISBN}</div>
-      <div>Book Update History</div>
       <Button onClick={handleUpdateBook}>Update Book</Button>
+      <div>Book Update History</div>
+      <div>LOGS</div>
+      <div>
+        <pre>{JSON.stringify(logs)}</pre>
+      </div>
     </div>
   );
 };

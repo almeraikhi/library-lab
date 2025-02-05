@@ -28,6 +28,17 @@ router.get(
   }
 );
 
+router.get(
+  '/:id/logs',
+  validateResource(GetBookByIdSchema, 'params'),
+  async (req: Request, res: Response) => {
+    const book = await prisma.$transaction(async (tx) => {
+      return booksTransactions(tx).getLogs(req.params as any);
+    });
+    res.json(book);
+  }
+);
+
 router.post('/', async (req: Request, res: Response) => {
   const { title, authorId, genresIds, ISBN, publishedAt } = req.body;
   try {
