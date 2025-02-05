@@ -1,6 +1,11 @@
 import { Prisma } from '@repo/prisma';
 import { CreateBookInput } from '../dtos/books.dto';
 
+interface PaginationParams {
+  page?: number;
+  limit?: number;
+}
+
 export const booksTransactions = (tx: Prisma.TransactionClient) => {
   return {
     create: async (input: CreateBookInput) => {
@@ -41,8 +46,13 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
       return book;
     },
 
-    getAll: async () => {
+    getAll: async ({ page = 1, limit = 10 }: PaginationParams = {}) => {
+      const validatedLimit = Math.min(Math.max(limit, 10), 100);
+      const skip = (page - 1) * validatedLimit;
+
       return tx.book.findMany({
+        skip,
+        take: validatedLimit,
         include: {
           genres: {
             include: {
