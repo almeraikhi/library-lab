@@ -10,5 +10,10 @@ export const authorsTransactions = (tx: Prisma.TransactionClient) => {
 
       return author;
     },
+
+    getAll: async () => {
+      const authors = await tx.author.findMany();
+      return authors;
+    },
   };
 };

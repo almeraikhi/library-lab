@@ -9,6 +9,21 @@ interface PaginationParams {
 export const booksTransactions = (tx: Prisma.TransactionClient) => {
   return {
     create: async (input: CreateBookInput) => {
+      const bookExists = await tx.book.findFirst({
+        where: {
+          title: {
+            equals: input.title,
+            mode: 'insensitive',
+          },
+          authorId: input.authorId,
+          ISBN: input.ISBN,
+        },
+      });
+
+      if (bookExists) {
+        throw new Error('Book already exists');
+      }
+
       // Validate genre IDs
       const existingGenres = await tx.genre.findMany({
         where: { id: { in: input.genresIds } },
