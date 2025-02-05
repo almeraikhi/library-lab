@@ -4,14 +4,14 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 export const createAppRouter = () =>
   createBrowserRouter([
     {
-      path: '/',
+      path: '/books',
       lazy: async () => {
         const { HomeRoute } = await import('./routes/home');
         return { Component: HomeRoute };
       },
     },
     {
-      path: '/create',
+      path: '/books/add',
       lazy: async () => {
         const { CreateBookRoute } = await import('./routes/createBook.route');
         return { Component: CreateBookRoute };
