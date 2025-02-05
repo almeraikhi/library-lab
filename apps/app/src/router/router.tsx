@@ -18,6 +18,13 @@ export const createAppRouter = () =>
       },
     },
     {
+      path: '/books/:id',
+      lazy: async () => {
+        const { BookRoute } = await import('./routes/book.route');
+        return { Component: BookRoute };
+      },
+    },
+    {
       path: '*',
       lazy: async () => {
         const { NotFoundRoute } = await import('./routes/not-found');

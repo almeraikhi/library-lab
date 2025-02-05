@@ -1,6 +1,11 @@
 import { Prisma } from '@repo/prisma';
-import { CreateBookInput } from '../dtos/books.dto';
+import {
+  CreateBookInput,
+  GetBookByIdInput,
+  GetBookByIdSchema,
+} from '../dtos/books.dto';
 import { ApiError } from 'utils/ApiError';
+import { ZodError } from 'zod';
 
 interface PaginationParams {
   page?: number;
@@ -102,6 +107,30 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
           author: true,
         },
       });
+    },
+
+    getById: async ({ id }: GetBookByIdInput) => {
+      try {
+        console.log('getting book by id', id);
+        const input = GetBookByIdSchema.parse({ id });
+
+        return tx.book.findUnique({
+          where: { id: input.id },
+          include: {
+            genres: {
+              include: {
+                genre: true,
+              },
+            },
+            author: true,
+          },
+        });
+      } catch (error) {
+        if (error instanceof ZodError) {
+          throw new ApiError(error.message, 'INVALID_INPUT', 400);
+        }
+        throw error;
+      }
     },
   };
 };

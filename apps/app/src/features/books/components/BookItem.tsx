@@ -1,9 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import { APIBook } from '../api/getBooks';
 import dayjs from 'dayjs';
 
 export const BookItem = ({ book }: { book: APIBook }) => {
+  const navigate = useNavigate();
+
+  const navigateToBook = () => {
+    navigate(`/books/${book.id}`);
+  };
+
   return (
-    <div className='flex md:flex-row flex-col gap-2 items-center border border-gray-200 rounded-md p-4 md:justify-between'>
+    <button
+      onClick={navigateToBook}
+      className='flex md:flex-row flex-col gap-2 items-center border border-gray-200 rounded-md p-4 md:justify-between'
+    >
       <div>
         <img
           src='/images/book-placeholder-image.jpg'
@@ -23,6 +33,6 @@ export const BookItem = ({ book }: { book: APIBook }) => {
         <div className='opacity-80'>ISBN</div>
         <div>{book.ISBN}</div>
       </div>
-    </div>
+    </button>
   );
 };

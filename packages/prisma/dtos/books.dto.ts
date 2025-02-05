@@ -10,3 +10,9 @@ export const CreateBookSchema = z.object({
 });
 
 export type CreateBookInput = z.infer<typeof CreateBookSchema>;
+
+export const GetBookByIdSchema = z.object({
+  id: z.string().min(1, 'ID is required'),
+});
+
+export type GetBookByIdInput = z.infer<typeof GetBookByIdSchema>;
