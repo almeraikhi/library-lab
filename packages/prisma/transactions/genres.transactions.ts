@@ -10,5 +10,8 @@ export const genresTransactions = (tx: Prisma.TransactionClient) => {
 
       return genre;
     },
+    getAll: async () => {
+      return tx.genre.findMany();
+    },
   };
 };

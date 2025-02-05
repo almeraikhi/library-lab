@@ -4,6 +4,7 @@ import { env } from '../env';
 import sampleRouter from './routes/sample.router';
 import booksRouter from './routes/books.router';
 import authorsRouter from './routes/authors.router';
+import genresRouter from './routes/genres.router';
 
 const app: Application = express();
 
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/sample', sampleRouter);
 app.use('/books', booksRouter);
 app.use('/authors', authorsRouter);
+app.use('/genres', genresRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Welcome to the API');
