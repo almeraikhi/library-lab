@@ -2,6 +2,7 @@ import { CreateBookInput } from '@repo/prisma/dtos/books.dto';
 import { useMutation } from '@tanstack/react-query';
 import { api } from '~/utils/axios';
 import { APIBook } from './getBooks';
+import { enqueueSnackbar } from 'notistack';
 
 /**
  * Fetches the todo list from the 'sample' route.
@@ -17,5 +18,10 @@ export const createBook = async (input: CreateBookInput) => {
 export function useCreateBook() {
   return useMutation({
     mutationFn: createBook,
+    onSuccess: () => {
+      enqueueSnackbar('Book created successfully', {
+        variant: 'success',
+      });
+    },
   });
 }
