@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form';
 import { Input } from '~/components/Input';
 import { Select } from '~/components/Select';
 import { useGetAuthors } from '~/features/authors/api/getAuthors';
+import { useGetGenres } from '~/features/genres/api/getGenres';
 
 type SelectOption = {
   label: string;
@@ -16,6 +17,7 @@ type CreateBookFormInput = Omit<CreateBookInput, 'authorId' | 'genresIds'> & {
 
 export const CreateBook = () => {
   const { data: authors, isLoading: isLoadingAuthors } = useGetAuthors();
+  const { data: genres, isLoading: isLoadingGenres } = useGetGenres();
 
   const form = useForm<CreateBookFormInput>({
     defaultValues: {
@@ -27,7 +29,10 @@ export const CreateBook = () => {
     },
   });
 
-  if (isLoadingAuthors || !authors) return <div>Loading...</div>;
+  const submit = form.handleSubmit((data) => {});
+
+  if (isLoadingAuthors || !authors || isLoadingGenres || !genres)
+    return <div>Loading...</div>;
 
   return (
     <div>
@@ -45,9 +50,21 @@ export const CreateBook = () => {
           value: author.id,
         }))}
       />
-      {/* <Input {...form.register('authorId')} placeholder='Author ID' /> */}
-      {/* <Input {...form.register('genresIds')} placeholder='Genres IDs' /> */}
-      <Input {...form.register('ISBN')} placeholder='ISBN' />
+
+      <Select
+        isMulti
+        placeholder='Genres...'
+        onChange={(value) => {
+          if (!value) return;
+          form.setValue('genres', [...value]);
+        }}
+        value={form.watch().genres}
+        options={genres.map((genre) => ({
+          label: genre.name,
+          value: genre.id,
+        }))}
+      />
+      <Input {...form.register('ISBN')} placeholder='9780136019701' />
       <Input {...form.register('publishedAt')} placeholder='Published At' />
     </div>
   );
