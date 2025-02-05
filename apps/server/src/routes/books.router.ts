@@ -3,7 +3,11 @@ import { prisma } from '@repo/prisma';
 import { booksTransactions } from '@repo/prisma/transactions/books.transactions';
 import { ApiError } from '@repo/prisma/utils/ApiError';
 import { validateResource } from '../utils/validateResource';
-import { GetBookByIdSchema } from '@repo/prisma/dtos/books.dto';
+import {
+  CreateBookSchema,
+  GetBookByIdSchema,
+  UpdateBookParamsSchema,
+} from '@repo/prisma/dtos/books.dto';
 const router: Router = express.Router();
 
 router.get('/', async (req: Request, res: Response) => {
@@ -12,6 +16,17 @@ router.get('/', async (req: Request, res: Response) => {
   });
   res.json(books);
 });
+
+router.get(
+  '/:id',
+  validateResource(GetBookByIdSchema, 'params'),
+  async (req: Request, res: Response) => {
+    const book = await prisma.$transaction(async (tx) => {
+      return booksTransactions(tx).getById(req.params as any);
+    });
+    res.json(book);
+  }
+);
 
 router.post('/', async (req: Request, res: Response) => {
   const { title, authorId, genresIds, ISBN, publishedAt } = req.body;
@@ -35,11 +50,15 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
-router.get(
+router.put(
   '/:id',
-  validateResource(GetBookByIdSchema, 'params'),
+  validateResource(UpdateBookParamsSchema, 'params'),
+  validateResource(CreateBookSchema, 'body'),
   async (req: Request, res: Response) => {
-    const book = await booksTransactions(prisma).getById(req.params as any);
+    const updateObject = { ...req.body, id: req.params.id };
+    const book = await prisma.$transaction(async (tx) => {
+      return booksTransactions(tx).update(updateObject);
+    });
     res.json(book);
   }
 );

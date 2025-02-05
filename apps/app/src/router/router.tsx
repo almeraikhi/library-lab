@@ -25,6 +25,13 @@ export const createAppRouter = () =>
       },
     },
     {
+      path: '/books/:id/update',
+      lazy: async () => {
+        const { UpdateBookRoute } = await import('./routes/updateBook.route');
+        return { Component: UpdateBookRoute };
+      },
+    },
+    {
       path: '*',
       lazy: async () => {
         const { NotFoundRoute } = await import('./routes/not-found');

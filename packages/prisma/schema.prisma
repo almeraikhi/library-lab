@@ -12,15 +12,26 @@ datasource db {
 }
 
 model Book {
-    id          String          @id @default(cuid())
-    title       String
-    ISBN        String
-    publishedAt DateTime
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @updatedAt
-    author      Author          @relation(fields: [authorId], references: [id])
-    authorId    String
-    genres      GenresOnBooks[]
+    id            String          @id @default(cuid())
+    title         String
+    ISBN          String
+    publishedAt   DateTime
+    createdAt     DateTime        @default(now())
+    updatedAt     DateTime        @updatedAt
+    author        Author          @relation(fields: [authorId], references: [id])
+    authorId      String
+    genres        GenresOnBooks[]
+    bookUpdateLog BookUpdateLog[]
+}
+
+model BookUpdateLog {
+    id        String   @id @default(cuid())
+    book      Book     @relation(fields: [bookId], references: [id])
+    bookId    String
+    oldData   Json
+    newData   Json
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 }
 
 model Author {

@@ -75,6 +75,87 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
 
       return book;
     },
+    update: async (input: CreateBookInput) => {
+      // Validate genre IDs
+      const existingGenres = await tx.genre.findMany({
+        where: { id: { in: input.genresIds } },
+        select: { id: true },
+      });
+
+      const existingGenreIds = existingGenres.map((g) => g.id);
+      const missingGenreIds = input.genresIds.filter(
+        (id) => !existingGenreIds.includes(id)
+      );
+
+      if (missingGenreIds.length > 0) {
+        throw new Error(
+          `Genres not found for IDs: ${missingGenreIds.join(', ')}`
+        );
+      }
+
+      const existingRecord = await tx.book.findFirst({
+        where: {
+          id: input.id,
+        },
+        include: {
+          genres: {
+            select: {
+              genreId: true,
+            },
+          },
+        },
+      });
+
+      // Create the book since all genre IDs are valid
+      const book = await tx.book.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          genres: {
+            deleteMany: {},
+            create: input.genresIds.map((id) => ({
+              genreId: id,
+            })),
+          },
+          author: {
+            connect: { id: input.authorId },
+          },
+          title: input.title,
+          ISBN: input.ISBN,
+          publishedAt: new Date(input.publishedAt),
+        },
+      });
+
+      const booksWithSameDuplicateIdentifier = await tx.book.count({
+        where: {
+          title: {
+            equals: input.title,
+            mode: 'insensitive',
+          },
+          authorId: input.authorId,
+          ISBN: input.ISBN,
+        },
+      });
+
+      // if there are more than 1 book with those unique identifiers,
+      // then it means the operation we performed caused a duplicate book
+      if (booksWithSameDuplicateIdentifier > 1) {
+        // throwing the error will undo the transaction, thus the book will not be upserted
+        throw new ApiError('Book already exists', 'BOOK_ALREADY_EXISTS', 409);
+      }
+
+      if (existingRecord) {
+        await tx.bookUpdateLog.create({
+          data: {
+            bookId: existingRecord.id,
+            oldData: existingRecord,
+            newData: book,
+          },
+        });
+      }
+      return book;
+    },
 
     getAll: async (args: GetAllArgs) => {
       const { params } = args;
