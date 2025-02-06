@@ -28,13 +28,12 @@ export const UpdateBookRoute = () => {
 
   // Define breadcrumb items.
   const breadcrumbs = [
-    { label: 'Books', path: '/books' },
     { label: book.title, path: `/books/${book.id}` },
-    { label: 'Update Book' },
+    { label: 'update' },
   ];
 
   return (
-    <div>
+    <div className='flex-1 w-full'>
       <Breadcrumb items={breadcrumbs} />
       <BookForm
         defaultValues={{

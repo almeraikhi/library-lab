@@ -1,11 +1,12 @@
 import { useRef, useEffect, useState } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { Tab } from '../Tabs/Tab';
 import { BooksActions } from '~/features/books/components/BooksActions';
 
 export const MainLayout = () => {
   const headerRef = useRef<HTMLElement>(null);
   const [headerHeight, setHeaderHeight] = useState(0);
+  const location = useLocation();
 
   useEffect(() => {
     const updateHeaderHeight = () => {
@@ -35,15 +36,11 @@ export const MainLayout = () => {
             <Tab to='/genres'>Genres</Tab>
           </nav>
 
-          <BooksActions />
+          {location.pathname === '/books' && <BooksActions />}
         </header>
-        <main
-          className='flex flex-col relative flex-1 gap-2'
-          style={{ marginTop: headerHeight }}
-        >
+        <main className='flex flex-col relative flex-1 gap-2 w-full pt-12'>
           <Outlet />
         </main>
-        <footer>{/* Optional footer */}</footer>
       </div>
     </div>
   );
