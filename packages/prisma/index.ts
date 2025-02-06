@@ -14,5 +14,4 @@ export const prisma =
 
 export type PrismaExtends = Parameters<typeof prisma.$extends>[0];
 
-
 if (env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;

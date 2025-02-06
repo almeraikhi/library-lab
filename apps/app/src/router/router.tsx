@@ -1,14 +1,56 @@
 import { useMemo } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from 'react-router-dom';
+import { MainLayout } from '~/components/Layouts/MainLayout';
 
 export const createAppRouter = () =>
   createBrowserRouter([
     {
       path: '/',
-      lazy: async () => {
-        const { HomeRoute } = await import('./routes/home');
-        return { Component: HomeRoute };
-      },
+      element: <Navigate to='/books' replace />, // Redirects from '/' to '/books'
+    },
+    {
+      path: '/books',
+      element: <MainLayout />,
+      children: [
+        {
+          index: true,
+          lazy: async () => {
+            const { BooksRoute } = await import(
+              '../features/books/routes/Books.Route'
+            );
+            return { Component: BooksRoute };
+          },
+        },
+        {
+          path: 'add',
+          lazy: async () => {
+            const { CreateBookRoute } = await import(
+              './routes/createBook.route'
+            );
+            return { Component: CreateBookRoute };
+          },
+        },
+        {
+          path: ':id',
+          lazy: async () => {
+            const { BookRoute } = await import('./routes/book.route');
+            return { Component: BookRoute };
+          },
+        },
+        {
+          path: ':id/update',
+          lazy: async () => {
+            const { UpdateBookRoute } = await import(
+              './routes/updateBook.route'
+            );
+            return { Component: UpdateBookRoute };
+          },
+        },
+      ],
     },
     {
       path: '*',
