@@ -10,8 +10,6 @@ export const validateResource = (
     const result = schema.safeParse(data);
 
     if (!result.success) {
-      // Optionally, format the error using result.error.flatten(),
-      // or simply result.error.errors for more detailed error information.
       res.status(400).json({
         message: 'Validation error',
         errors: result.error.flatten(),
