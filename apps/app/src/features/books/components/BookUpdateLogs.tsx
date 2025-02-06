@@ -25,10 +25,19 @@ export const ChangeLog = ({ log }: { log: BookUpdateLog }) => {
     .filter(([key]) => key !== 'updatedAt') // Exclude updatedAt
     .map(([key, value]) => {
       const oldValue = log.oldData[key];
+      const formattedValue =
+        key === 'publishedAt'
+          ? dayjs(value).format('DD-MM-YYYY')
+          : JSON.stringify(value);
+      const formattedOldValue =
+        key === 'publishedAt'
+          ? dayjs(oldValue).format('DD-MM-YYYY')
+          : JSON.stringify(oldValue);
       return (
         <div key={key}>
-          <strong>{key}:</strong> from <em>{JSON.stringify(oldValue)}</em> to{' '}
-          <em>{JSON.stringify(value)}</em>
+          <strong>{key}:</strong>{' '}
+          <em className='opacity-60'>{formattedOldValue}</em> &rarr;{' '}
+          <em>{formattedValue}</em>
         </div>
       );
     });

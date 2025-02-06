@@ -8,8 +8,10 @@ import { Select } from '~/components/Select';
 import { useGetAuthors } from '~/features/authors/api/getAuthors';
 import { useGetGenres } from '~/features/genres/api/getGenres';
 import { useCreateBook } from '../api/createBook';
+import dayjs from 'dayjs';
 
 export type BookFormProps = {
+  submitButtonText?: string;
   defaultValues?: CreateBookInput;
   onSubmit: (data: CreateBookInput) => void;
 };
@@ -92,11 +94,19 @@ export const BookForm = (props: BookFormProps) => {
         }))}
       />
       <div className='text-red-500'>{errors.genresIds?.message}</div>
+      <div>ISBN</div>
       <Input {...form.register('ISBN')} placeholder='9780136019701' />
       <div className='text-red-500'>{errors.ISBN?.message}</div>
-      <Input {...form.register('publishedAt')} placeholder='Published At' />
+      <div>Published At</div>
+      <Input
+        type='date'
+        // {...form.register('publishedAt')}
+        value={dayjs(form.watch('publishedAt')).format('YYYY-MM-DD')}
+        placeholder='Published At'
+        onChange={(e) => form.setValue('publishedAt', e.target.value)}
+      />
       <div className='text-red-500'>{errors.publishedAt?.message}</div>
-      <Button onClick={submit}>Add Book</Button>
+      <Button onClick={submit}>{props.submitButtonText ?? 'Add Book'}</Button>
     </div>
   );
 };

@@ -44,6 +44,7 @@ export const UpdateBookRoute = () => {
           ISBN: book.ISBN,
           publishedAt: new Date(book.publishedAt),
         }}
+        submitButtonText='Update Book'
         onSubmit={handleUpdateBook}
       />
     </div>
