@@ -4,8 +4,9 @@ import { Select } from '~/components/Select';
 import { useGetAuthors } from '~/features/authors/api/getAuthors';
 import { useGetGenres } from '~/features/genres/api/getGenres';
 import { useBookStore } from '../stores/booksStore';
+import { AddBook } from './AddBook';
 
-export const BooksFilters = () => {
+export const BooksActions = () => {
   const { data: authors, isLoading: isLoadingAuthors } = useGetAuthors();
   const { data: genres, isLoading: isLoadingGenres } = useGetGenres();
   const { setAuthorId, authorId, setGenresIds, genresIds } = useBookStore();
@@ -60,6 +61,7 @@ export const BooksFilters = () => {
           value: genre.id,
         }))}
       />
+      <AddBook />
     </div>
   );
 };

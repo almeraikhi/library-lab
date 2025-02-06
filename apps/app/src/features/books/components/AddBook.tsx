@@ -8,8 +8,8 @@ export const AddBook = () => {
   };
 
   return (
-    <div className='flex flex-col gap-2 w-full justify-center items-center h-full'>
-      <Button onClick={navigateToAddBook}>Add Book...</Button>
-    </div>
+    <Button className='flex-1' onClick={navigateToAddBook}>
+      Add Book
+    </Button>
   );
 };
