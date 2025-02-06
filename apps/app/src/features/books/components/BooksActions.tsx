@@ -30,7 +30,7 @@ export const BooksActions = () => {
   }
 
   return (
-    <div className='flex md:flex-row flex-col gap-2 w-full justify-center items-center h-full'>
+    <div className='flex md:flex-row flex-col gap-2 w-full justify-center items-center h-12'>
       <Select
         placeholder='Select Author...'
         isClearable
