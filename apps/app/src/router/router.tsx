@@ -19,8 +19,10 @@ export const createAppRouter = () =>
         {
           index: true,
           lazy: async () => {
-            const { HomeRoute } = await import('./routes/home');
-            return { Component: HomeRoute };
+            const { BooksRoute } = await import(
+              '../features/books/routes/Books.Route'
+            );
+            return { Component: BooksRoute };
           },
         },
         {

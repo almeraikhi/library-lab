@@ -12,13 +12,13 @@ export const BookItem = ({ book }: { book: APIBook }) => {
   return (
     <button
       onClick={navigateToBook}
-      className='flex md:flex-row flex-col gap-2 items-center border border-gray-200 rounded-md p-4 md:justify-between'
+      className='flex md:flex-row flex-col gap-2 items-center border border-gray-200 rounded-md p-4 md:justify-between w-full'
     >
       <div>
         <img
           src='/images/book-placeholder-image.jpg'
           alt={book.title}
-          className='w-40 h-60 object-cover rounded-md'
+          className='min-w-40 h-60 object-cover rounded-md'
         />
       </div>
       <div>

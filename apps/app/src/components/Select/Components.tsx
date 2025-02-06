@@ -20,7 +20,12 @@ const Control = <
 >(
   props: ControlProps<Option, IsMulti, Group>
 ) => (
-  <div className={cn('rounded bg-bkg px-2', props.isDisabled && 'opacity-60')}>
+  <div
+    className={cn(
+      'rounded bg-background px-2',
+      props.isDisabled && 'opacity-60'
+    )}
+  >
     <components.Control {...props} />
   </div>
 );
@@ -60,7 +65,9 @@ const Option = <
   return (
     // override for the time being, react select expect a div and I am usng a button
     <MenuItem compact ref={innerRef as any} {...(innerProps as any)}>
-      {(data as any).label}
+      <div className='rounded-full bg-primary py-1 px-2'>
+        {(data as any).label}
+      </div>
     </MenuItem>
   );
 };
@@ -99,7 +106,7 @@ const Menu = <
   return (
     <components.Menu<Option, IsMulti, Group>
       {...props}
-      className='z-[9999] rounded p-2'
+      className='z-[9999] rounded p-2 bg-background-paper'
     >
       {props.children}
     </components.Menu>
