@@ -19,7 +19,7 @@ export function useCreateBook() {
   return useMutation({
     mutationFn: createBook,
     onSuccess: () => {
-      enqueueSnackbar('Book created successfully', {
+      enqueueSnackbar('Book added successfully', {
         variant: 'success',
       });
     },

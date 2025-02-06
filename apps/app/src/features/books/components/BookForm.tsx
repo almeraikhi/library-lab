@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CreateBookInput, CreateBookSchema } from '@repo/prisma/dtos/books.dto';
 import { useMemo } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, UseFormReturn } from 'react-hook-form';
 import { Button } from '~/components/Button';
 import { Input } from '~/components/Input';
 import { Select } from '~/components/Select';
@@ -13,7 +13,10 @@ import dayjs from 'dayjs';
 export type BookFormProps = {
   submitButtonText?: string;
   defaultValues?: CreateBookInput;
-  onSubmit: (data: CreateBookInput) => void;
+  onSubmit: (
+    data: CreateBookInput,
+    form: UseFormReturn<CreateBookInput>
+  ) => void;
 };
 
 export const BookForm = (props: BookFormProps) => {
@@ -55,7 +58,7 @@ export const BookForm = (props: BookFormProps) => {
   }, [genres, genresIds]);
 
   const submit = form.handleSubmit((data) => {
-    props.onSubmit(data);
+    props.onSubmit(data, form);
   });
 
   if (isLoadingAuthors || !authors || isLoadingGenres || !genres)
