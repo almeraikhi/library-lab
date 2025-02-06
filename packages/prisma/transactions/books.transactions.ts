@@ -3,6 +3,7 @@ import {
   CreateBookInput,
   GetBookByIdInput,
   GetBookByIdSchema,
+  UpdateBookInput,
 } from '../dtos/books.dto';
 import { ApiError } from 'utils/ApiError';
 import { ZodError } from 'zod';
@@ -19,6 +20,35 @@ export type GetAllBooksParams = PaginationParams & {
 
 export type GetAllArgs = {
   params: GetAllBooksParams;
+};
+
+export const booksValidations = (tx: Prisma.TransactionClient) => {
+  return {
+    validateAuthor: async (authorId: string) => {
+      const existingAuthor = await tx.author.findUnique({
+        where: { id: authorId },
+      });
+
+      if (!existingAuthor) {
+        throw new ApiError('Author not found', 'AUTHOR_NOT_FOUND', 404);
+      }
+    },
+    validateGenres: async (genresIds: string[]) => {
+      const existingGenres = await tx.genre.findMany({
+        where: { id: { in: genresIds } },
+        select: { id: true },
+      });
+
+      const existingGenreIds = existingGenres.map((g) => g.id);
+      const missingGenreIds = genresIds.filter(
+        (id) => !existingGenreIds.includes(id)
+      );
+
+      if (missingGenreIds.length > 0) {
+        throw new ApiError('Genres not found', 'GENRE_NOT_FOUND', 404);
+      }
+    },
+  };
 };
 
 export const booksTransactions = (tx: Prisma.TransactionClient) => {
@@ -39,22 +69,8 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
         throw new ApiError('Book already exists', 'BOOK_ALREADY_EXISTS', 409);
       }
 
-      // Validate genre IDs
-      const existingGenres = await tx.genre.findMany({
-        where: { id: { in: input.genresIds } },
-        select: { id: true },
-      });
-
-      const existingGenreIds = existingGenres.map((g) => g.id);
-      const missingGenreIds = input.genresIds.filter(
-        (id) => !existingGenreIds.includes(id)
-      );
-
-      if (missingGenreIds.length > 0) {
-        throw new Error(
-          `Genres not found for IDs: ${missingGenreIds.join(', ')}`
-        );
-      }
+      await booksValidations(tx).validateAuthor(input.authorId);
+      await booksValidations(tx).validateGenres(input.genresIds);
 
       // Create the book since all genre IDs are valid
       const book = await tx.book.create({
@@ -75,55 +91,55 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
 
       return book;
     },
-    update: async (input: CreateBookInput) => {
-      // Validate genre IDs
-      const existingGenres = await tx.genre.findMany({
-        where: { id: { in: input.genresIds } },
-        select: { id: true },
-      });
-
-      const existingGenreIds = existingGenres.map((g) => g.id);
-      const missingGenreIds = input.genresIds.filter(
-        (id) => !existingGenreIds.includes(id)
-      );
-
-      if (missingGenreIds.length > 0) {
-        throw new Error(
-          `Genres not found for IDs: ${missingGenreIds.join(', ')}`
-        );
-      }
-
+    update: async (input: UpdateBookInput) => {
       const existingRecord = await tx.book.findFirst({
         where: {
           id: input.id,
         },
         include: {
+          author: true,
           genres: {
-            select: {
-              genreId: true,
+            include: {
+              genre: true,
             },
           },
         },
       });
+
+      const updateObject: Prisma.BookUpdateInput = {
+        title: input.title,
+        ISBN: input.ISBN,
+        publishedAt: input.publishedAt,
+      };
+
+      if (input.authorId) {
+        await booksValidations(tx).validateAuthor(input.authorId);
+        updateObject.author = {
+          connect: { id: input.authorId },
+        };
+      }
+
+      if (input.genresIds) {
+        await booksValidations(tx).validateGenres(input.genresIds);
+        updateObject.genres = {
+          deleteMany: {},
+          create: input.genresIds.map((id) => ({ genreId: id })),
+        };
+      }
 
       // Create the book since all genre IDs are valid
       const book = await tx.book.update({
         where: {
           id: input.id,
         },
-        data: {
+        data: updateObject,
+        include: {
+          author: true,
           genres: {
-            deleteMany: {},
-            create: input.genresIds.map((id) => ({
-              genreId: id,
-            })),
+            include: {
+              genre: true,
+            },
           },
-          author: {
-            connect: { id: input.authorId },
-          },
-          title: input.title,
-          ISBN: input.ISBN,
-          publishedAt: new Date(input.publishedAt),
         },
       });
 

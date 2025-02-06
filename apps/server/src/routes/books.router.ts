@@ -7,6 +7,7 @@ import {
   CreateBookSchema,
   GetBookByIdSchema,
   UpdateBookParamsSchema,
+  UpdateBookSchema,
 } from '@repo/prisma/dtos/books.dto';
 const router: Router = express.Router();
 
@@ -46,38 +47,50 @@ router.get(
   }
 );
 
-router.post('/', async (req: Request, res: Response) => {
-  const { title, authorId, genresIds, ISBN, publishedAt } = req.body;
-  try {
-    const book = await prisma.$transaction(async (tx) => {
-      return booksTransactions(tx).create({
-        title,
-        authorId,
-        genresIds,
-        ISBN,
-        publishedAt,
+router.post(
+  '/',
+  validateResource(CreateBookSchema, 'body'),
+  async (req: Request, res: Response) => {
+    const { title, authorId, genresIds, ISBN, publishedAt } = req.body;
+    try {
+      const book = await prisma.$transaction(async (tx) => {
+        return booksTransactions(tx).create({
+          title,
+          authorId,
+          genresIds,
+          ISBN,
+          publishedAt,
+        });
       });
-    });
-    res.json(book);
-  } catch (error) {
-    if (error instanceof ApiError) {
-      res.status(error.status).json({ message: error.message });
-    } else {
-      res.status(500).json({ error: 'Internal server error' });
+      res.json(book);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        res.status(error.status).json({ message: error.message });
+      } else {
+        res.status(500).json({ error: 'Internal server error' });
+      }
     }
   }
-});
+);
 
 router.put(
   '/:id',
   validateResource(UpdateBookParamsSchema, 'params'),
-  validateResource(CreateBookSchema, 'body'),
+  validateResource(UpdateBookSchema, 'body'),
   async (req: Request, res: Response) => {
-    const updateObject = { ...req.body, id: req.params.id };
-    const book = await prisma.$transaction(async (tx) => {
-      return booksTransactions(tx).update(updateObject);
-    });
-    res.json(book);
+    try {
+      const updateObject = { ...req.body, id: req.params.id };
+      const book = await prisma.$transaction(async (tx) => {
+        return booksTransactions(tx).update(updateObject);
+      });
+      res.json(book);
+    } catch (error) {
+      if (error instanceof ApiError) {
+        res.status(error.status).json({ message: error.message });
+      } else {
+        res.status(500).json({ error: 'Internal server error' });
+      }
+    }
   }
 );
 

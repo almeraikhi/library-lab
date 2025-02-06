@@ -14,6 +14,22 @@ export const CreateBookSchema = z.object({
 
 export type CreateBookInput = z.infer<typeof CreateBookSchema>;
 
+export const UpdateBookSchema = z.object({
+  id: z.string().optional(),
+  title: z.string().optional(),
+  authorId: z.string().optional(),
+  genresIds: z.array(z.string()).optional(),
+  ISBN: z.string().optional(),
+  publishedAt: z
+    .preprocess(
+      (arg) => (typeof arg === 'string' ? new Date(arg) : arg),
+      z.date().min(new Date('1440-01-01'), 'Published at is required')
+    )
+    .optional(),
+});
+
+export type UpdateBookInput = z.infer<typeof UpdateBookSchema>;
+
 export const GetBookByIdSchema = z.object({
   id: z.string().min(1, 'ID is required'),
 });

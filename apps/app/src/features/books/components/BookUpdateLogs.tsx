@@ -1,15 +1,23 @@
 import { BookUpdateLog } from '@repo/prisma/client';
 import dayjs from 'dayjs';
-import { updatedDiff } from 'deep-object-diff';
+import { updatedDiff, detailedDiff } from 'deep-object-diff';
 import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useBookLogs } from '~/features/books/api/useBookLogs';
 
 export const ChangeLog = ({ log }: { log: BookUpdateLog }) => {
-  const change = useMemo(() => {
+  const { added, deleted, updated } = useMemo(() => {
+    console.log('old data', log.oldData);
+    console.log('new data', log.newData);
+    const detailed = detailedDiff(log.oldData, log.newData);
+    console.log('detailed', detailed);
     const diff = updatedDiff(log.oldData, log.newData);
-    return diff;
+    return detailed;
   }, [log]);
+
+  const change = useMemo(() => {
+    return { ...updated, ...added, ...deleted };
+  }, [updated, added, deleted]);
 
   useEffect(() => {
     console.log('change is', change);
@@ -22,8 +30,36 @@ export const ChangeLog = ({ log }: { log: BookUpdateLog }) => {
 
   // Format the change log to show old and new values, excluding updatedAt
   const changeEntries = Object.entries(change)
-    .filter(([key]) => key !== 'updatedAt') // Exclude updatedAt
+    .filter(([key]) => !['updatedAt', 'authorId'].includes(key)) // Exclude updatedAt
     .map(([key, value]) => {
+      if (key === 'genres') {
+        console.log('genres here...');
+        const oldGenres = log.oldData[key];
+        const genresNames = oldGenres.map((g) => g.genre.name);
+        const newGenres = log.newData[key];
+        const newGenresNames = newGenres.map((g) => g.genre.name);
+        return (
+          <div key={key}>
+            <strong>{key}:</strong>{' '}
+            <em className='opacity-60'>{genresNames.join(', ')}</em> &rarr;{' '}
+            <em>{newGenresNames.join(', ')}</em>
+          </div>
+        );
+      }
+
+      if (key === 'author') {
+        console.log('author here...');
+        const oldAuthor = log.oldData[key];
+        const newAuthor = log.newData[key];
+        return (
+          <div key={key}>
+            <strong>{key}:</strong>{' '}
+            <em className='opacity-60'>{oldAuthor.name}</em> &rarr;{' '}
+            <em>{newAuthor.name}</em>
+          </div>
+        );
+      }
+
       const oldValue = log.oldData[key];
       const formattedValue =
         key === 'publishedAt'
@@ -53,7 +89,6 @@ export const ChangeLog = ({ log }: { log: BookUpdateLog }) => {
 export const BookUpdateLogs = () => {
   const { id } = useParams();
   const { data: logs, isLoading: isLoadingLogs } = useBookLogs({ id: id! });
-  const navigate = useNavigate();
 
   if (isLoadingLogs) return <div>Loading...</div>;
 
