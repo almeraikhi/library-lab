@@ -26,7 +26,7 @@ export const BookItem = ({ book }: { book: APIBook }) => {
         <div className='opacity-80 text-center'>by {book.author.name}</div>
         <div>Published at {dayjs(book.publishedAt).format('YYYY')}</div>
       </div>
-      <div className='flex md:flex-row flex-col md:gap-2 items-center max-w-72'>
+      <div className='flex md:flex-row flex-col md:gap-2 items-center max-w-72 justify-center'>
         <div>{book.genres.map((genre) => genre.genre.name).join(' • ')}</div>
       </div>
       <div className='flex flex-col items-center'>
