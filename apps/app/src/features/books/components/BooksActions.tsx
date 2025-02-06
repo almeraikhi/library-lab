@@ -9,7 +9,8 @@ import { AddBook } from './AddBook';
 export const BooksActions = () => {
   const { data: authors, isLoading: isLoadingAuthors } = useGetAuthors();
   const { data: genres, isLoading: isLoadingGenres } = useGetGenres();
-  const { setAuthorId, authorId, setGenresIds, genresIds } = useBookStore();
+  const { setAuthorId, authorId, setGenresIds, genresIds, setPage } =
+    useBookStore();
 
   const selectedAuthor = useMemo(() => {
     const author = authors?.find((author) => author.id === authorId);
@@ -39,6 +40,7 @@ export const BooksActions = () => {
           } else {
             setAuthorId(value.value);
           }
+          setPage(1);
         }}
         value={selectedAuthor ?? null}
         options={authors.map((author) => ({
@@ -54,6 +56,7 @@ export const BooksActions = () => {
           if (!value) return;
           const ids = value.map((genre) => genre.value);
           setGenresIds(ids);
+          setPage(1);
         }}
         value={selectedGenres ?? null}
         options={genres.map((genre) => ({

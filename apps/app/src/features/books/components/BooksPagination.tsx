@@ -10,14 +10,14 @@ export const BooksPagination = () => {
   const totalPages = Math.ceil(totalCount / 10); // Assuming 10 items per page
 
   const handlePrevious = () => {
-    if (page > 1) {
+    if (page > 1 && totalCount > 0) {
       setPage(page - 1);
       window.scrollTo(0, 0);
     }
   };
 
   const handleNext = () => {
-    if (page < totalPages) {
+    if (page < totalPages && totalCount > 0) {
       setPage(page + 1);
       window.scrollTo(0, 0);
     }
@@ -31,10 +31,16 @@ export const BooksPagination = () => {
           {totalCount}
         </div>
         <div className='flex items-center gap-2'>
-          <Button onClick={handlePrevious} disabled={page === 1}>
+          <Button
+            onClick={handlePrevious}
+            disabled={page === 1 || totalCount === 0}
+          >
             Previous
           </Button>
-          <Button onClick={handleNext} disabled={page === totalPages}>
+          <Button
+            onClick={handleNext}
+            disabled={page === totalPages || totalCount === 0}
+          >
             Next
           </Button>
         </div>
