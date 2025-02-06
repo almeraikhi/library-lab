@@ -1,35 +1,54 @@
 import { useMemo } from 'react';
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import {
+  Navigate,
+  RouterProvider,
+  createBrowserRouter,
+} from 'react-router-dom';
+import { MainLayout } from '~/components/Layouts/MainLayout';
 
 export const createAppRouter = () =>
   createBrowserRouter([
     {
+      path: '/',
+      element: <Navigate to='/books' replace />, // Redirects from '/' to '/books'
+    },
+    {
       path: '/books',
-      lazy: async () => {
-        const { HomeRoute } = await import('./routes/home');
-        return { Component: HomeRoute };
-      },
-    },
-    {
-      path: '/books/add',
-      lazy: async () => {
-        const { CreateBookRoute } = await import('./routes/createBook.route');
-        return { Component: CreateBookRoute };
-      },
-    },
-    {
-      path: '/books/:id',
-      lazy: async () => {
-        const { BookRoute } = await import('./routes/book.route');
-        return { Component: BookRoute };
-      },
-    },
-    {
-      path: '/books/:id/update',
-      lazy: async () => {
-        const { UpdateBookRoute } = await import('./routes/updateBook.route');
-        return { Component: UpdateBookRoute };
-      },
+      element: <MainLayout />,
+      children: [
+        {
+          index: true,
+          lazy: async () => {
+            const { HomeRoute } = await import('./routes/home');
+            return { Component: HomeRoute };
+          },
+        },
+        {
+          path: 'add',
+          lazy: async () => {
+            const { CreateBookRoute } = await import(
+              './routes/createBook.route'
+            );
+            return { Component: CreateBookRoute };
+          },
+        },
+        {
+          path: ':id',
+          lazy: async () => {
+            const { BookRoute } = await import('./routes/book.route');
+            return { Component: BookRoute };
+          },
+        },
+        {
+          path: ':id/update',
+          lazy: async () => {
+            const { UpdateBookRoute } = await import(
+              './routes/updateBook.route'
+            );
+            return { Component: UpdateBookRoute };
+          },
+        },
+      ],
     },
     {
       path: '*',
