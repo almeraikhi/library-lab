@@ -190,6 +190,17 @@ export const booksTransactions = (tx: Prisma.TransactionClient) => {
       });
     },
 
+    count: async (args: GetAllArgs) => {
+      const { params } = args;
+      const { authorId, genresIds } = params;
+
+      const count = await tx.book.count({
+        where: { authorId, genres: { some: { genreId: { in: genresIds } } } },
+      });
+
+      return { count };
+    },
+
     getById: async ({ id }: GetBookByIdInput) => {
       try {
         console.log('getting book by id', id);

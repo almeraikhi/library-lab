@@ -62,7 +62,7 @@ export const BookRoute = () => {
             Update Book
           </Button>
         </div>
-        <div>
+        <div className='flex flex-col gap-4 pb-4'>
           <div>Change Logs</div>
           <BookUpdateLogs />
         </div>

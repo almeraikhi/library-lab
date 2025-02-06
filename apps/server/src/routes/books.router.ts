@@ -17,6 +17,13 @@ router.get('/', async (req: Request, res: Response) => {
   res.json(books);
 });
 
+router.get('/count', async (req: Request, res: Response) => {
+  const count = await prisma.$transaction(async (tx) => {
+    return booksTransactions(tx).count({ params: req.query });
+  });
+  res.json(count);
+});
+
 router.get(
   '/:id',
   validateResource(GetBookByIdSchema, 'params'),

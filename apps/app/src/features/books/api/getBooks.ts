@@ -16,6 +16,7 @@ export type APIBook = Book & {
 export const fetchBooks = async (params?: {
   authorId?: string;
   genresIds?: string[];
+  page?: number;
 }) => {
   const response = await api.get<APIBook[]>('/books', { params });
   return response.data;
@@ -27,6 +28,7 @@ export const fetchBooks = async (params?: {
 export function useGetBooks(params?: {
   authorId?: string;
   genresIds?: string[];
+  page?: number;
 }) {
   return useQuery({
     queryKey: ['books', params],
