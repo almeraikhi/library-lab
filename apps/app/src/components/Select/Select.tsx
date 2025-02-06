@@ -21,10 +21,12 @@ export function Select<
       isClearable={false}
       components={{
         Control: SelectComponents.Control,
-        Option: SelectComponents.Option,
+        // Option: SelectComponents.Option,
         IndicatorsContainer: SelectComponents.IndicatorsContainer,
         Menu: SelectComponents.Menu,
-        ValueContainer: SelectComponents.ValueContainer,
+        // ValueContainer: SelectComponents.ValueContainer,
+        // SingleValue: SelectComponents.SingleValue,
+        // MultiValueContainer: SelectComponents.MultiValueContainer,
         ...components,
       }}
       {...rest}

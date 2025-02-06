@@ -3,6 +3,8 @@ import type {
   GroupHeadingProps,
   IndicatorsContainerProps,
   MenuProps,
+  MultiValueGenericProps,
+  SingleValueProps,
 } from 'react-select';
 import type { MultiValueRemoveProps } from 'react-select';
 // import { CloseIcon } from '../Icons';
@@ -65,7 +67,7 @@ const Option = <
   return (
     // override for the time being, react select expect a div and I am usng a button
     <MenuItem compact ref={innerRef as any} {...(innerProps as any)}>
-      <div className='rounded-full bg-primary py-1 px-2'>
+      <div className='rounded-full bg-primary py-1 px-2 text-primary-contrastText'>
         {(data as any).label}
       </div>
     </MenuItem>
@@ -113,6 +115,18 @@ const Menu = <
   );
 };
 
+const SingleValue = ({ children, ...props }: SingleValueProps<any>) => (
+  <components.SingleValue {...props}>
+    <div className='rounded-full bg-primary py-1 px-2 text-primary-contrastText'>
+      {children}
+    </div>
+  </components.SingleValue>
+);
+
+const MultiValueContainer = (props: MultiValueGenericProps<any>) => {
+  return <components.MultiValueContainer {...props} />;
+};
+
 export const SelectComponents = {
   Control,
   IndicatorsContainer,
@@ -120,4 +134,6 @@ export const SelectComponents = {
   ValueContainer,
   MultiValueRemove,
   Menu,
+  SingleValue,
+  MultiValueContainer,
 };
