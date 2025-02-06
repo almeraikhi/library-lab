@@ -74,3 +74,6 @@ This will start two development servers.
 
 * APP: <http://localhost:5173/>
 * API: <http://localhost:3010>
+
+# HLD
+Refer to the [HLD document](./docs/HLD.md)  for more details on the project.
